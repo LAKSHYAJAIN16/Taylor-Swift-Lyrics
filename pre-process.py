@@ -7,7 +7,7 @@ import transformers
 from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM
 from peft import LoraConfig, get_peft_model 
 
-subfolders = [ f.path for f in os.scandir(r"C:\Users\USER\Projects\tay-llm\Taylor-Swift-Lyrics\data\Albums") if f.is_dir() ]
+subfolders = [f.path for f in os.scandir(r"C:\Users\USER\Projects\tay-llm\Taylor-Swift-Lyrics\data\Albums") if f.is_dir() ]
 data = []
 for fold in subfolders:
     data.append([])
@@ -18,11 +18,13 @@ for fold in subfolders:
             lines = file.readlines()
             lines.pop(0)
             lines.pop(len(lines) - 1)
-            string_1 = "Write a song in Taylor Swift's style called " + path.removesuffix(".txt").replace("TaylorsVersion","").replace("_"," ") + "->:!-> \n"
-            string = string_1 + "".join(lines)
-            data.append({"prediction":string,"input":string_1})
-            
+            string_1 = "Write a song in Taylor Swift's style called " + path.removesuffix(".txt").replace("TaylorsVersion","").replace("_"," ") + "->:!-> \n "
+            string = string_1 + " ".join(lines)
+            data.append({"prediction":string,"input":string_1})           
+
 del data[0]
+data =  data[:10]
+print(data[0])
 
 model = AutoModelForCausalLM.from_pretrained(
     "bigscience/bloom-7b1", 
@@ -55,7 +57,11 @@ config = LoraConfig(
 
 model = get_peft_model(model, config)
 
-data = data.map(lambda samples: tokenizer(samples['prediction']), batched=True)
+for m in range(0, len(data)):
+    try:
+        data[m]["prediction"] = tokenizer(data[m]["prediction"])
+    except:
+        print(m)
 
 trainer = transformers.Trainer(
     model=model, 
@@ -66,7 +72,7 @@ trainer = transformers.Trainer(
         warmup_steps=100, 
         max_steps=200, 
         learning_rate=2e-4, 
-        fp16=True,
+        fp16=False,
         logging_steps=1, 
         output_dir='outputs'
     ),
