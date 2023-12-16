@@ -14,8 +14,9 @@ for fold in subfolders:
             lines = file.readlines()
             lines.pop(0)
             lines.pop(len(lines) - 1)
-            name_of_song = wordninja.split(path.removesuffix(".txt").replace("TaylorsVersion","").replace("_"," ").replace("Acoustic","").replace("AcousticVersion","").replace("PopVersion","").replace("LinerNotes","").replace("10MinuteVersion","").replace("originalversion","").replace("FromTheVault","").replace("Poem",""))
-            string_1 = "Write a song in Taylor Swift's style called " + name_of_song + "->:!-> \n "
+            name_of_song = " ".join(wordninja.split(path.removesuffix(".txt").replace("TaylorsVersion","").replace("_"," ").replace("Acoustic","").replace("AcousticVersion","").replace("PopVersion","").replace("LinerNotes","").replace("10MinuteVersion","").replace("originalversion","").replace("FromTheVault","").replace("Poem","").replace("FromtheVault","")))
+            print(name_of_song)
+            string_1 = "Write a song in Taylor Swift's style called " + name_of_song + " ->:!-> \n "
             string = string_1 + " ".join(lines)
             data.append({"prediction":string,"input":string_1})           
 
